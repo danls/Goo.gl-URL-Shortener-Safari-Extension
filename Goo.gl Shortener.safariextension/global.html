@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<script>
+
+// Register event listeners
+safari.application.addEventListener("command", performCommand, false);
+safari.application.addEventListener("validate", validateCommand, false);
+
+function urlencode(str) {
+	// from http://phpjs.org/functions/urlencode:573
+	str = (str+'').toString();
+	return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
+}
+
+function performCommand(event) {
+
+	if (event.command !== "gooShorten")
+		return;
+		
+	console.log("clicked");
+
+	var currentURL = event.target.browserWindow.activeTab.url;
+	var currentTitle = event.target.browserWindow.activeTab.title;
+	if (currentURL) {
+
+		var url = "http://dev.semimagic.com/goo/a.php?url=" + urlencode(currentURL);
+		
+		/*
+		// Request the url
+		var xRequest = new XMLHttpRequest();
+		xRequest.open("GET", url, false);
+		xRequest.send(null);
+		var data = xRequest.responseText;
+		*/
+
+		// Open in a new tab
+		safari.application.activeBrowserWindow.openTab().url = url;
+
+	}
+}
+ 
+function validateCommand(event) {
+
+	if (event.command !== "gooShorten")
+		return;
+
+	// Disable the button if there is no URL loaded in the tab.
+	event.target.disabled = !event.target.browserWindow.activeTab.url;	
+
+}
+
+</script>
